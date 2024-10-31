@@ -30,3 +30,8 @@ class ExampleTool(BaseTool):
 
         # Return the result of the tool's operation as a string
         return "Result of ExampleTool operation"
+
+
+if __name__ == "__main__":
+    tool = ExampleTool(example_field="Hello, world!")
+    print(tool.run())

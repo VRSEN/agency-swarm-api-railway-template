@@ -23,8 +23,8 @@ from ExampleAgency.agency import agency
 4. **Set your APP_TOKEN:**
    In `src/main.py`, replace `YOUR_APP_TOKEN` with a secure token. This will be used for API authentication.
 
-5. **Test your Agency:**
-   Run `python agency.py` to test your agency. This will also save your agent settings in the settings.json file. Put this file in the /src directory. This step is necessary to avoid creating new assistants on every application start.
+5. **Add settings.json:**
+   Run `python ExampleAgency/agency.py`. This will save your agent settings in the settings.json file. Place this file in the /src directory. This step is necessary to avoid recreating assistants on every application start.
 
 6. **Build and run Docker container:**
    Make sure you have created your .env file first.
@@ -40,23 +40,23 @@ from ExampleAgency.agency import agency
    ```
 
 7. **Test API:**
-```bash
-# macOS/Linux
-curl -X POST \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR_APP_TOKEN>" \
-  -d '{"message": "What is the capital of France?"}' \
-  <YOUR_DEPLOYMENT_URL>/api/agency
-```
+   - macOS/Linux:
+   ```bash
+   curl -X POST \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer <YOUR_APP_TOKEN>" \
+    -d '{"message": "What is the capital of France?"}' \
+    <YOUR_DEPLOYMENT_URL>/api/agency
+   ```
 
-```bash
-# Windows PowerShell
-curl -X POST `
-  -H "Content-Type: application/json" `
-  -H "Authorization: Bearer <YOUR_APP_TOKEN>" `
-  -d "{\"message\": \"What is the capital of France?\"}" `
-  <YOUR_DEPLOYMENT_URL>/api/agency
-```
+   - Windows PowerShell:
+   ```bash
+   curl -X POST `
+    -H "Content-Type: application/json" `
+    -H "Authorization: Bearer <YOUR_APP_TOKEN>" `
+    -d "{\"message\": \"What is the capital of France?\"}" `
+    <YOUR_DEPLOYMENT_URL>/api/agency
+  ```
 
 8. **Access the interfaces:**
    - Gradio UI: `<YOUR_DEPLOYMENT_URL>/demo-gradio` (local: http://localhost:8000/demo-gradio)

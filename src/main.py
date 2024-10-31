@@ -49,6 +49,8 @@ app = gr.mount_gradio_app(app, gradio_interface, path="/demo-gradio", root_path=
 security = HTTPBearer()
 
 
+# Models
+
 class AttachmentTool(BaseModel):
     type: str
 
@@ -63,11 +65,16 @@ class AgencyRequest(BaseModel):
     attachments: List[Attachment] = []
 
 
+# Token verification
+
 async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
     token = credentials.credentials
     if token != APP_TOKEN:
         raise HTTPException(status_code=401, detail="Unauthorized")
     return token
+
+
+# API endpoint
 
 
 @app.post("/api/agency")
@@ -81,6 +88,7 @@ async def get_completion(request: AgencyRequest, token: str = Depends(verify_tok
 
 @app.exception_handler(Exception)
 async def exception_handler(request, exc):
+    """Global exception handler to return formatted error responses"""
     error_message = str(exc)
     if isinstance(exc, tuple):
         error_message = str(exc[1]) if len(exc) > 1 else str(exc[0])
