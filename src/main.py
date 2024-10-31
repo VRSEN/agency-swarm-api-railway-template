@@ -19,9 +19,19 @@ APP_TOKEN = "YOUR_APP_TOKEN"  # you can generate it here https://www.random.org/
 logging.basicConfig(level=logging.INFO)
 
 load_dotenv()
+# Initialize FastAPI application
+app = FastAPI()
 
-app = FastAPI(docs_url="/docs", redoc_url=None)
+# CORS Configuration
+# For local development, allow all origins
 origins = ["*"]
+# For production, use specific origins:
+# origins = [
+#     "https://your-generated-Railway-domain.up.railway.app",  # Your Railway domain
+#     "http://localhost:8000",  # Local development
+# ]
+
+# Add CORS middleware to enable cross-origin requests
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -34,7 +44,7 @@ app.add_middleware(
 agency.demo_gradio = demo_gradio_override
 # Mount the gradio interface
 gradio_interface = agency.demo_gradio(agency)
-app = gr.mount_gradio_app(app, gradio_interface, path="/demo-gradio")
+app = gr.mount_gradio_app(app, gradio_interface, path="/demo-gradio", root_path="/demo-gradio")
 
 security = HTTPBearer()
 
