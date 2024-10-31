@@ -13,23 +13,23 @@ This repo demonstrates how to deploy any Agency Swarm agency as a FastAPI applic
    - For Railway: Configure environment variables in Railway Dashboard under Variables section
 
 2. **Add requirements:** Add your extra requirements to the requirements.txt file. The base requirements are:
-```python:Backend/requirements.txt
+```python:src/requirements.txt
 agency-swarm~=0.3.1
 gradio~=4.44.1
 uvicorn~=0.30.1
 ```
 
 3. **Add your Agency:**
-   Drag-and-drop your agency into the /Backend directory and import it according to the example in the `main.py`:
+   Drag-and-drop your agency into the /src directory and import it according to the example in the `main.py`:
 ```python
 from ExampleAgency.agency import agency
 ```
 
 4. **Set your APP_TOKEN:**
-   In `Backend/main.py`, replace `YOUR_APP_TOKEN` with a secure token. This will be used for API authentication.
+   In `src/main.py`, replace `YOUR_APP_TOKEN` with a secure token. This will be used for API authentication.
 
 5. **Test your Agency:**
-   Run `python agency.py` to test your agency. This will also save your agent settings in the settings.json file. Put this file in the /Backend directory. This step is necessary to avoid creating new assistants on every application start.
+   Run `python agency.py` to test your agency. This will also save your agent settings in the settings.json file. Put this file in the /src directory. This step is necessary to avoid creating new assistants on every application start.
 
 6. **Build and run Docker container:**
    Make sure you have created your .env file first.

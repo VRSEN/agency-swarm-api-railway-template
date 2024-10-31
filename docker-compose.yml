@@ -9,5 +9,5 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - Backend/.env
+      - src/.env
     restart: always
