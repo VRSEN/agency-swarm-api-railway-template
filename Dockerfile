@@ -4,9 +4,6 @@ FROM python:3.12-slim
 # Set environment variable to allow print statements to be displayed immediately
 ENV PYTHONUNBUFFERED=1
 
-ARG OPENAI_API_KEY
-ENV OPENAI_API_KEY=${OPENAI_API_KEY}
-
 # Set the working directory in the container
 WORKDIR /app
 

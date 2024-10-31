@@ -2,10 +2,12 @@ version: '3'
 
 services:
   api-service:
-    image: my-agency:1.0
+    image: agency-swarm
     build:
       context: .
       dockerfile: Dockerfile
-    restart: always
     ports:
-      - 8000:8000
+      - "8000:8000"
+    env_file:
+      - Backend/.env
+    restart: always
