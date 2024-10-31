@@ -1,4 +1,5 @@
 import logging
+import os
 from typing import List
 
 import uvicorn
@@ -13,7 +14,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from ExampleAgency.agency import agency
 from utils.demo_gradio_override import demo_gradio_override
 
-APP_TOKEN = "YOUR_APP_TOKEN"  # you can generate it here https://www.random.org/passwords/?num=5&len=32&format=html&rnd=new
+APP_TOKEN = os.getenv("APP_TOKEN")
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
