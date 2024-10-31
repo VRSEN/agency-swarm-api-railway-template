@@ -24,7 +24,7 @@ from ExampleAgency.agency import agency
    In `src/main.py`, replace `YOUR_APP_TOKEN` with a secure token. This will be used for API authentication.
 
 5. **Add settings.json:**
-   Run `python ExampleAgency/agency.py`. This will save your agent settings in the settings.json file. Place this file in the /src directory. This step is necessary to avoid recreating assistants on every application start.
+   Run `python ExampleAgency/agency.py` to generate your agent settings, which will be saved in a `settings.json` file. Move this file to the `/src` directory, and ensure it's committed to the repository. This step prevents the application from recreating assistants each time it starts.
 
 6. **Build and run Docker container:**
    Make sure you have created your .env file first.
