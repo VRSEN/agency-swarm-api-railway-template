@@ -12,12 +12,7 @@ This repo demonstrates how to deploy any Agency Swarm agency as a FastAPI applic
    - For local testing: Copy `.env.example` to `.env` and add your environment variables
    - For Railway: Configure environment variables in Railway Dashboard under Variables section
 
-2. **Add requirements:** Add your extra requirements to the requirements.txt file. The base requirements are:
-```python:src/requirements.txt
-agency-swarm~=0.3.1
-gradio~=4.44.1
-uvicorn~=0.30.1
-```
+2. **Add requirements:** Add your extra requirements to the requirements.txt file.
 
 3. **Add your Agency:**
    Drag-and-drop your agency into the /src directory and import it according to the example in the `main.py`:
