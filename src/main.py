@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 import gradio as gr
 from fastapi import FastAPI, HTTPException, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
@@ -20,14 +21,14 @@ logging.basicConfig(level=logging.INFO)
 load_dotenv()
 
 app = FastAPI(docs_url="/docs", redoc_url=None)
-# origins = ["*"]
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=origins,
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
+origins = ["*"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Override the demo_gradio function
 agency.demo_gradio = demo_gradio_override
