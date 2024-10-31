@@ -59,8 +59,8 @@ curl -X POST `
 ```
 
 8. **Access the interfaces:**
-   - Gradio UI: `<YOUR_DEPLOYMENT_URL>/demo-gradio`
-   - API Documentation: `<YOUR_DEPLOYMENT_URL>/docs`
+   - Gradio UI: `<YOUR_DEPLOYMENT_URL>/demo-gradio` (local: http://localhost:8000/demo-gradio)
+   - API Documentation: `<YOUR_DEPLOYMENT_URL>/docs` (local: http://localhost:8000/docs)
 
 ## API Documentation
 
