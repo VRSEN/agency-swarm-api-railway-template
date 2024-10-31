@@ -8,7 +8,16 @@ This repo demonstrates how to deploy any Agency Swarm agency as a FastAPI applic
 * Python 3.12
 
 ## Setup Instructions
-1. **Add your keys:** Copy `.env.example` to `.env` and add your keys
+1. **Configure environment variables:** 
+   - For local testing: Copy `.env.example` to `.env` and add your environment variables (OpenAI API key, etc.)
+   - For Docker/Railway: Pass environment variables at build time:
+     ```bash
+     # Docker
+     docker build --build-arg OPENAI_API_KEY=your_key_here .
+     
+     # Railway
+     # Configure environment variables in Railway Dashboard
+     ```
 
 2. **Add requirements:** Add your extra requirements to the requirements.txt file. The base requirements are:
 ```python:Backend/requirements.txt
