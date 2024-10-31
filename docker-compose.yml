@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  api-service:
+    image: my-agency:1.0
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 8000:8000
