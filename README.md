@@ -5,7 +5,7 @@ This repo demonstrates how to deploy any Agency Swarm agency as a FastAPI applic
 ## Prerequisites
 * Fully tested agency
 * Docker installed on your system
-* Python 3.12 or higher
+* Python 3.12
 
 ## Setup Instructions
 1. **Add your keys:** Copy `.env.example` to `.env` and add your keys
