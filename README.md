@@ -57,6 +57,11 @@ https://youtu.be/53_e3lmk6Mo?t=810
 	  - Verify port is set to 8000 (it’s selected automatically after deployment)
 	  - Click “Generate domain”
 
+7. **Test the interfaces:**
+
+   - Gradio UI: `<YOUR_DEPLOYMENT_URL>/demo-gradio` (local: http://localhost:8000/demo-gradio)
+   - API Documentation: `<YOUR_DEPLOYMENT_URL>/docs` (local: http://localhost:8000/docs)
+
 8. **Test API:**
 
    - macOS/Linux:
