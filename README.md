@@ -31,10 +31,10 @@ https://youtu.be/53_e3lmk6Mo?t=810
 
    Make sure your agency.py has a global agency object exposed.
 
-4.	**Set your APP_TOKEN:**
+4. **Set your APP_TOKEN:**
    - In `.env`, replace `YOUR_APP_TOKEN` with a secure token. This will be used for API authentication.
 
-5.	**Add settings.json:**
+5. **Add settings.json:**
    - Run `python main.py` from the `src/` directory.
    - Open `http://localhost:8000/demo-gradio` and send a message.
    - This will save your agent settings in the `settings.json` file.
@@ -43,19 +43,20 @@ https://youtu.be/53_e3lmk6Mo?t=810
 6. **Deploy on Railway:**
 
    1. Log into Railway
-   2. Click “New Empty Project”
-   3. Click “Add a service”
-   4. Select “Empty service”
+   2. Click "New Empty Project"
+   3. Click "Add a service"
+   4. Select "Empty service"
    5. Go to Settings
-   6. Connect your repository (Railway will automatically detect the Dockerfile)
-	7.	Go to Variables in Railway dashboard
-	8.	Add new variable:
-	  - `OPENAI_API_KEY`: Your OpenAI API key
-	  - Add any other required environment variables
-	9.	Click “Deploy” to start the build process
-	10.	Go to Settings to generate a domain:
-	  - Verify port is set to 8000 (it’s selected automatically after deployment)
-	  - Click “Generate domain”
+   6. Connect your repository
+      - Railway will automatically detect the Dockerfile
+   7. Go to Variables in Railway dashboard
+   8. Add new variable:
+      - `OPENAI_API_KEY`: Your OpenAI API key
+      - Add any other required environment variables
+   9. Click "Deploy" to start the build process
+   10. Go to Settings to generate a domain:
+       - Verify port is set to 8000 (it's selected automatically after deployment)
+       - Click "Generate domain"
 
 7. **Test the interfaces:**
 
@@ -134,7 +135,6 @@ Build and run the Docker container:
 ```bash
 docker compose up --build
 ```
-
 
 ## Troubleshooting
 
