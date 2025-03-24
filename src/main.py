@@ -1,18 +1,24 @@
-import logging
 import os
-from typing import List
+import logging
+from typing import override
+import json
+from queue import Queue
+import threading
 
 import uvicorn
-from pydantic import BaseModel
 from dotenv import load_dotenv
 import gradio as gr
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
+from agency_swarm.util.streaming import AgencyEventHandler
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from ExampleAgency.agency import agency
 from utils.demo_gradio_override import demo_gradio_override
+from utils.request_models import AgencyRequest, AgencyRequestStreaming
+from openai.types.beta import AssistantStreamEvent
+
 
 APP_TOKEN = os.getenv("APP_TOKEN")
 
@@ -49,23 +55,6 @@ app = gr.mount_gradio_app(app, gradio_interface, path="/demo-gradio", root_path=
 
 security = HTTPBearer()
 
-
-# Models
-
-class AttachmentTool(BaseModel):
-    type: str
-
-
-class Attachment(BaseModel):
-    file_id: str
-    tools: List[AttachmentTool]
-
-
-class AgencyRequest(BaseModel):
-    message: str
-    attachments: List[Attachment] = []
-
-
 # Token verification
 
 async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
@@ -74,17 +63,92 @@ async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(secur
         raise HTTPException(status_code=401, detail="Unauthorized")
     return token
 
-
 # API endpoint
-
 
 @app.post("/api/agency")
 async def get_completion(request: AgencyRequest, token: str = Depends(verify_token)):
     response = agency.get_completion(
         request.message,
+        message_files=request.message_files,
+        yield_messages=request.yield_messages,
+        recipient_agent=request.recipient_agent,
+        additional_instructions=request.additional_instructions,
         attachments=request.attachments,
+        tool_choice=request.tool_choice,
+        verbose=request.verbose,
+        response_format=request.response_format
     )
     return {"response": response}
+
+
+@app.post("/api/agency-streaming")
+async def get_completion_stream(request: AgencyRequestStreaming, token: str = Depends(verify_token)):
+    queue = Queue()
+
+    class StreamEventHandler(AgencyEventHandler):
+        @override
+        def on_event(self, event: AssistantStreamEvent) -> None:
+            queue.put(event.model_dump())
+
+        @classmethod
+        def on_all_streams_end(cls):
+            queue.put("[DONE]")
+
+        @classmethod
+        def on_exception(cls, exception: Exception):
+            # Store the actual exception
+            queue.put({"error": str(exception)})
+
+    async def generate_response():
+        try:
+            def run_completion():
+                try:
+                    agency.get_completion_stream(
+                        request.message,
+                        message_files=request.message_files,
+                        recipient_agent=request.recipient_agent,
+                        additional_instructions=request.additional_instructions,
+                        attachments=request.attachments,
+                        tool_choice=request.tool_choice,
+                        response_format=request.response_format,
+                        event_handler=StreamEventHandler
+                    )
+                except Exception as e:
+                    # Send the actual exception
+                    queue.put({"error": str(e)})
+
+            thread = threading.Thread(target=run_completion)
+            thread.start()
+
+            while True:
+                try:
+                    event = queue.get(timeout=30)
+                    if event == "[DONE]":
+                        break
+                    # If it's an error event
+                    if isinstance(event, dict) and "error" in event:
+                        yield f"data: {json.dumps(event)}\n\n"
+                        break
+                    yield f"data: {json.dumps(event)}\n\n"
+                except Queue.Empty:
+                    yield f"data: {json.dumps({'error': 'Request timed out'})}\n\n"
+                    break
+                except Exception as e:
+                    yield f"data: {json.dumps({'error': str(e)})}\n\n"
+                    break
+
+        except Exception as e:
+            yield f"data: {json.dumps({'error': str(e)})}\n\n"
+
+    return StreamingResponse(
+        generate_response(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no"
+        }
+    )
 
 
 @app.exception_handler(Exception)
