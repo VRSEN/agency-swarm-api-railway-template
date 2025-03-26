@@ -24,7 +24,6 @@ class Attachment(BaseModel):
 class AgencyRequest(BaseModel):
     message: str
     message_files: List[str] = None
-    yield_messages: bool = False
     recipient_agent: str = None # Will be automatically converted to the Agent instance
     additional_instructions: str = None
     attachments: List[Attachment] = []
@@ -39,12 +38,6 @@ class AgencyRequest(BaseModel):
                 raise ValueError(f"Invalid agent name. Available agents: {list(AGENT_INSTANCES.keys())}")
             return AGENT_INSTANCES[v]  # Substitute str with an Agent instance
         return v
-
-    @model_validator(mode='after')
-    def check_verbose_yield_combination(self):
-        if self.verbose and self.yield_messages:
-            raise ValueError("Verbose mode is not compatible with yield_messages=True")
-        return self
     
 class AgencyRequestStreaming(BaseModel):
     message: str

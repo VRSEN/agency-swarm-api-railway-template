@@ -124,8 +124,6 @@ Request body:
 {
   "message": "What is the capital of France?",
   "message_files": ["file1.txt", "file2.pdf"],
-  // yield_messages and verbose are mutually exclusive
-  "yield_messages": false,
   "verbose": false,
   "recipient_agent": "agent_name",
   "additional_instructions": "Please be concise in your response",
@@ -149,23 +147,22 @@ Request body:
 Parameters:
 - `message` (required): The message to send to the agent
 - `message_files` (optional): List of file paths to include with the message. Files provided in this field would be assigned to both `file_search` and `code_interpreter` tools.
-- `yield_messages` (optional): If true, returns intermediate message. Cannot be set if `verbose=True`
-- `verbose` (optional): If true, returns intermediate message and prints them into the console. Cannot be set if `yield_messages=True`
+- `verbose` (optional): If true, returns intermediate messages and prints them into the console.
 - `recipient_agent` (optional): Name of the specific agent to handle the request
 - `additional_instructions` (optional): Extra instructions for processing the request
 - `attachments` (optional): A list of files attached to the message, and the tools they should be added to. See [OpenAI Docs](https://platform.openai.com/docs/api-reference/messages/createMessage#messages-createmessage-attachments)
 - `tool_choice` (optional): Specify which function should be called by the agent
 - `response_format` (optional): Specify the format of the response (e.g., JSON or oai compatible response schema)
 
-Response (with yield_messages and verbose set to False):
+Response (verbose set to False):
 
 ```json
 {
-  "response": "Paris"
+  "response": "My name is Brandon."
 }
 ```
 
-Response (with either yield_messages or verbose set to True):
+Response (verbose set to True):
 
 ```json
 {

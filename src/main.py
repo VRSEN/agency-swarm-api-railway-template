@@ -16,7 +16,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from ExampleAgency.agency import agency
 from utils.demo_gradio_override import demo_gradio_override
-from utils.request_models import AgencyRequest, AgencyRequestStreaming
+from models.request_models import AgencyRequest, AgencyRequestStreaming
 from openai.types.beta import AssistantStreamEvent
 
 
@@ -70,7 +70,6 @@ async def get_completion(request: AgencyRequest, token: str = Depends(verify_tok
     response = agency.get_completion(
         request.message,
         message_files=request.message_files,
-        yield_messages=request.yield_messages,
         recipient_agent=request.recipient_agent,
         additional_instructions=request.additional_instructions,
         attachments=request.attachments,

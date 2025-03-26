@@ -1,15 +1,11 @@
-import os
 import json
 import aiohttp
 import asyncio
-from dotenv import load_dotenv
-
-load_dotenv()
 
 async def test_streaming():
     url = "https://your-railway-url.up.railway.app/api/agency-streaming"
     headers = {
-        "Authorization": f"Bearer {os.getenv('APP_TOKEN')}",
+        "Authorization": "Bearer YOUR_APP_TOKEN",
         "Content-Type": "application/json",
         "Accept": "text/event-stream"
     }
