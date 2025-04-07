@@ -1,3 +1,4 @@
-agency-swarm~=0.3.1
+agency-swarm
 gradio~=4.44.1
 uvicorn~=0.30.1
+aiohttp

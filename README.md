@@ -24,7 +24,7 @@ https://youtu.be/53_e3lmk6Mo?t=810
 2. **Add requirements:** Add your extra requirements to the `requirements.txt` file.
 
 3. **Add your Agency:**
-   Drag-and-drop your agency into the `/src` directory and import it according to the example in `main.py`.
+   Drag-and-drop your agency into the `/src` directory and import it according to the example in `main.py` and `utils/request_models.py`.
    ```python
    from ExampleAgency.agency import agency
    ```
@@ -35,7 +35,7 @@ https://youtu.be/53_e3lmk6Mo?t=810
    - In `.env`, replace `YOUR_APP_TOKEN` with a secure token. This will be used for API authentication.
 
 5. **Add settings.json:**
-   - Run `python main.py` from the `src/` directory.
+   - Simply run `python main.py` from the `src/` directory.
    - Open `http://localhost:8000/demo-gradio` and send a message.
    - This will save your agent settings in the `settings.json` file.
    This step is necessary to avoid recreating assistants on every application start.
@@ -65,6 +65,8 @@ https://youtu.be/53_e3lmk6Mo?t=810
 
 8. **Test API:**
 
+   ## Synchronous api
+
    - macOS/Linux:
 
    ```bash
@@ -84,6 +86,34 @@ https://youtu.be/53_e3lmk6Mo?t=810
    <YOUR_DEPLOYMENT_URL>/api/agency
    ```
 
+   ## Asynchronous api
+   Simplest way of checking asynchronous api would be to use Curl command:
+
+   - macOS/Linux:
+
+   ```bash
+   curl -X POST \
+   -H "Content-Type: application/json" \
+   -H "Authorization: Bearer <YOUR_APP_TOKEN>" \
+   -d '{"message": "Write a 500 word poem"}' \
+   <YOUR_DEPLOYMENT_URL>/api/agency-streaming
+   ```
+
+   - Windows PowerShell:
+   ```
+   curl -X POST `
+   -H "Content-Type: application/json" `
+   -H "Authorization: Bearer <YOUR_APP_TOKEN>" `
+   -d "{\"message\": \"Write a 500 word poem?\"}" `
+   <YOUR_DEPLOYMENT_URL>/api/agency-streaming
+   ```
+
+   However, since this endpoint sends raw data, in order to extract the text of the response, you can use the `test_streaming.py` script, located in the `/src` directory.
+
+   ```
+   python test_streaming.py
+   ```
+
 ## API Documentation
 
 ### `POST /api/agency`
@@ -93,24 +123,176 @@ Request body:
 ```json
 {
   "message": "What is the capital of France?",
+  "message_files": ["file1.txt", "file2.pdf"],
+  "verbose": false,
+  "recipient_agent": "agent_name",
+  "additional_instructions": "Please be concise in your response",
   "attachments": [
     {
       "file_id": "file-123",
       "tools": [{ "type": "file_search" }, { "type": "code_interpreter" }]
     }
+  ],
+  "tool_choice": {
+    "type": "function",
+    "function": { "name": "specific_function" }
+  },
+  
+  "response_format": {
+    "type": "json_object"
+  }
+}
+```
+
+Parameters:
+- `message` (required): The message to send to the agent
+- `message_files` (optional): List of file paths to include with the message. Files provided in this field would be assigned to both `file_search` and `code_interpreter` tools.
+- `verbose` (optional): If true, returns intermediate messages and prints them into the console.
+- `recipient_agent` (optional): Name of the specific agent to handle the request
+- `additional_instructions` (optional): Extra instructions for processing the request
+- `attachments` (optional): A list of files attached to the message, and the tools they should be added to. See [OpenAI Docs](https://platform.openai.com/docs/api-reference/messages/createMessage#messages-createmessage-attachments)
+- `tool_choice` (optional): Specify which function should be called by the agent
+- `response_format` (optional): Specify the format of the response (e.g., JSON or oai compatible response schema)
+
+Response (verbose set to False):
+
+```json
+{
+  "response": "My name is Brandon."
+}
+```
+
+Response (verbose set to True):
+
+```json
+{
+  "response": [
+    {
+      "msg_type": "text",
+      "sender_name": "User",
+      "receiver_name": "ExampleAgent",
+      "content": "What's your name?",
+      "obj": {
+        "id": "msg_abc...",
+        "assistant_id": null,
+        "attachments": [],
+        "completed_at": null,
+        "content": [
+          {
+            "text": {
+              "annotations": [],
+              "value": "What's your name?"
+            },
+            "type": "text"
+          }
+        ],
+        "created_at": 1742830384,
+        "incomplete_at": null,
+        "incomplete_details": null,
+        "metadata": {},
+        "object": "thread.message",
+        "role": "user",
+        "run_id": null,
+        "status": null,
+        "thread_id": "thread_abc..."
+      }
+    },
+    {
+      "msg_type": "text",
+      "sender_name": "ExampleAgent",
+      "receiver_name": "User",
+      "content": "My name is Brandon.",
+      "obj": {
+        "id": "msg_abc...",
+        "assistant_id": "asst_abc...",
+        "attachments": [],
+        "completed_at": null,
+        "content": [
+          {
+            "text": {
+              "annotations": [],
+              "value": "My name is Brandon."
+            },
+            "type": "text"
+          }
+        ],
+        "created_at": 1742830387,
+        "incomplete_at": null,
+        "incomplete_details": null,
+        "metadata": {},
+        "object": "thread.message",
+        "role": "assistant",
+        "run_id": "run_abc...",
+        "status": null,
+        "thread_id": "thread_abc..."
+      }
+    }
   ]
 }
 ```
 
-- `message`: The message to send to the agent.
-- `attachments` (optional): A list of files attached to the message, and the tools they should be added to. See [OpenAI Docs](https://platform.openai.com/docs/api-reference/messages/createMessage#messages-createmessage-attachments).
+---
 
-Response:
+### `POST /api/agency-streaming`
+
+Request body:
 
 ```json
 {
-  "response": "Paris"
+  "message": "What is the capital of France?",
+  "message_files": ["file1.txt", "file2.pdf"],
+  "recipient_agent": "agent_name",
+  "additional_instructions": "Please be concise in your response",
+  "attachments": [
+    {
+      "file_id": "file-123",
+      "tools": [{ "type": "file_search" }, { "type": "code_interpreter" }]
+    }
+  ],
+  "tool_choice": {
+    "type": "function",
+    "function": { "name": "specific_function" }
+  },
+  
+  "response_format": {
+    "type": "json_object"
+  }
 }
+```
+
+Parameters:
+- `message` (required): The message to send to the agent
+- `message_files` (optional): List of file paths to include with the message. Files provided in this field would be assigned to both `file_search` and `code_interpreter` tools.
+- `recipient_agent` (optional): Name of the specific agent to handle the request
+- `additional_instructions` (optional): Extra instructions for processing the request
+- `attachments` (optional): A list of files attached to the message, and the tools they should be added to. See [OpenAI Docs](https://platform.openai.com/docs/api-reference/messages/createMessage#messages-createmessage-attachments)
+- `tool_choice` (optional): Specify which function should be called by the agent
+- `response_format` (optional): Specify the format of the response (e.g., JSON or oai compatible response schema)
+
+Response (a single chunk in SSE format):
+
+```json
+data: {
+   "data": {
+      "id": "msg_abc...", 
+      "delta": {
+         "content": [
+            {
+               "index": 0, 
+               "type": "text", 
+               "text": {
+                  "annotations": null, 
+                  "value": "Hello, "
+                  }
+            }
+         ], 
+         "role": null
+      }, 
+      "object": "thread.message.delta"
+   }, 
+   "event": "thread.message.delta"
+}
+
 ```
 
 ### Authentication
